@@ -25,6 +25,8 @@ namespace AcGit {
 
             virtual Tag* lookupTag(QString name) = 0;
 
+            virtual QList<Tag*> lookupTag(Sha *sha) = 0;
+
     };
 
     inline ITags::~ITags() {}

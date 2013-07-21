@@ -71,7 +71,7 @@ QStringList Tags::stringTagsList()
 void Tags::createTag(QString name, Sha *sha, Tagger *tagger, QString message)
 {
     git_oid *objectSha = (git_oid*)malloc(sizeof (git_oid));
-    git_oid *newSha;
+    git_oid newSha;
     git_object *gitObject;
 
     git_oid_fromstr(objectSha, sha->toString().data());
@@ -85,13 +85,20 @@ void Tags::createTag(QString name, Sha *sha, Tagger *tagger, QString message)
         qDebug() << "tagger->getRaw() is null";
     }
     if(gitObject && tagger->getRaw())
-        git_tag_create(newSha, repo->getInternalRepo(), name.toLocal8Bit(), gitObject,
-                       tagger->getRaw(), message.toLocal8Bit(), 1);
+    {
+        git_tag_create(&newSha, repo->getInternalRepo(), name.toLocal8Bit(), gitObject,
+                       tagger->getRaw(), message.toLocal8Bit(), 0);
+    }
 
     git_tag *newTag;
-    git_tag_lookup(&newTag, repo->getInternalRepo(), newSha);
+    git_tag_lookup(&newTag, repo->getInternalRepo(), &newSha);
 
-    tags.append(new Tag (name, new Sha(newSha), newTag));
+    tags.append(new Tag (name, new Sha(&newSha), newTag));
+
+    foreach (Tag *tag, tags)
+    {
+        qDebug() << "tagName" << tag->name();
+    }
 }
 
 void Tags::deleteTagException (GitException e)
@@ -124,6 +131,32 @@ Tag *Tags::lookupTag(QString name)
         }
     }
     return tagFound;
+}
+
+QList<Tag *> Tags::lookupTag(Sha *sha)
+{
+    QList<Tag *> matchingTags;
+    foreach (Tag *tag, tags)
+    {
+        bool matchFound = false;
+
+        if (tag->toString().contains(sha->toString()))
+        {
+            matchFound = true;
+        }
+
+        Sha tagTarget(git_tag_target_id(tag->rawTag()));
+        if (tagTarget.toString().contains(sha->toString()) == true)
+        {
+            matchFound = true;
+        }
+
+        if (matchFound)
+        {
+            matchingTags.append(tag);
+        }
+    }
+    return matchingTags;
 }
 
 }

@@ -21,6 +21,7 @@ namespace AcGit
             QString refName();
 
             Tagger *getTagger();
+            const git_tag *rawTag();
     private:
             QString tagName;
             git_tag *tag;

@@ -28,6 +28,8 @@ namespace AcGit
 
             virtual Tag *lookupTag(QString name);
 
+            virtual QList<Tag *> lookupTag(Sha *sha);
+
     private:
             Repository *repo;
             QList<Tag*> tags;

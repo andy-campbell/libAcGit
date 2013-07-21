@@ -45,4 +45,9 @@ Tagger* Tag::getTagger()
     return tagger;
 }
 
+const git_tag *Tag::rawTag()
+{
+    return tag;
+}
+
 }
