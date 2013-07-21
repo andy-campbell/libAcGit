@@ -10,6 +10,7 @@
 #include "ICommits.h"
 #include "IBranches.h"
 #include "ITags.h"
+#include "Configuration.h"
 
 #if defined(LIBACGIT_LIBRARY)
 #  define LIBACGITREPOSITORY_EXPORT Q_DECL_EXPORT
@@ -23,6 +24,7 @@ namespace AcGit
     class ICommits;
     class Commit;
     class ITags;
+    class Configuration;
 
     class LIBACGITREPOSITORY_EXPORT Repository
     {
@@ -37,12 +39,14 @@ namespace AcGit
             git_repository *getInternalRepo();
             ICommits *CommitsAgent();
             ITags *TagsAgent();
+            Configuration *ConfigurationAgent();
             Commit *HeadCommit();
-        private:
+    private:
             git_repository *repo;
             ICommits *commits;
             IBranches *branches;
             ITags *tags;
+            Configuration *config;
     };
 
 }

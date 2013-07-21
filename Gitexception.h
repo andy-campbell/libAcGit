@@ -10,14 +10,17 @@ namespace AcGit
     class GitException : public std::exception
     {
         public:
-            GitException();
+            GitException(int ret);
 
             ~GitException() throw();
 
             QByteArray exceptionMessage() const throw();
 
+            int returnValue();
+
         private:
             QByteArray m;
+            int returnVal;
     };
 
     int gitTest(int ret);

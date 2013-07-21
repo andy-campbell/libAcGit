@@ -32,7 +32,8 @@ SOURCES += \
     Diffprintcallback.cpp \
     Treeentry.cpp \
     Treeentrycallback.cpp \
-    Tagger.cpp
+    Tagger.cpp \
+    Configuration.cpp
 
 HEADERS +=\
         libacgit_global.h \
@@ -59,4 +60,5 @@ HEADERS +=\
     Diffprintcallback.h \
     Treeentry.h \
     Treeentrycallback.h \
-    Tagger.h
+    Tagger.h \
+    Configuration.h

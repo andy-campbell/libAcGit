@@ -21,6 +21,7 @@ Repository::Repository(QString path)
         branches = new Branches(repo);
         commits = new Commits(this);
         tags = new Tags(this);
+        config = new Configuration(this);
 
     }
     catch (GitException e)
@@ -53,6 +54,11 @@ ITags *Repository::TagsAgent()
 git_repository* Repository::getInternalRepo()
 {
     return repo;
+}
+
+Configuration* Repository::ConfigurationAgent()
+{
+    return config;
 }
 
 Commit* Repository::HeadCommit()
