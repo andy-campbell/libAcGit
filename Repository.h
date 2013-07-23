@@ -41,12 +41,15 @@ namespace AcGit
             ITags *TagsAgent();
             Configuration *ConfigurationAgent();
             Commit *HeadCommit();
+
+            bool HasWorkingTreeChanges();
     private:
             git_repository *repo;
             ICommits *commits;
             IBranches *branches;
             ITags *tags;
             Configuration *config;
+            bool hasWorkingTreeChanges;
     };
 
 }

@@ -4,6 +4,7 @@
 #include "Gitexception.h"
 #include "Tag.h"
 #include "Tags.h"
+#include "Workingdirdiff.h"
 
 #include <QDebug>
 #include <QList>
@@ -81,5 +82,17 @@ Commit* Repository::HeadCommit()
     return commit;
 }
 
+bool Repository::HasWorkingTreeChanges()
+{
+    bool hasChanges = false;
+    WorkingDirDiff diff(HeadCommit()->tree());
+
+    if (diff.fileList().size() != 0)
+    {
+        hasChanges = true;
+    }
+
+    return hasChanges;
+}
 
 }
