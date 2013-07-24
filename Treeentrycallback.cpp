@@ -21,13 +21,14 @@ void TreeEntryCallback::addEntry(const char* root, const git_tree_entry *entry)
     if (type == GIT_OBJ_BLOB)
     {
         QString path = QString(root) + QString (git_tree_entry_name(entry));
-        TreeEntry *treeEntry = new TreeEntry(entry, path);
+        TreeEntry *treeEntry = new TreeEntry(entry, path, repo);
         treeEntries.push_back(treeEntry);
     }
 }
 
-TreeEntryCallback::TreeEntryCallback(git_tree *tree)
+TreeEntryCallback::TreeEntryCallback(git_tree *tree, Repository *repo)
 {
+    this->repo = repo;
     try
     {
         gitTest(git_tree_walk(tree, GIT_TREEWALK_PRE, addEntriesCallBack, this));

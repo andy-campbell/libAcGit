@@ -20,7 +20,7 @@ Tree::~Tree()
 
 void Tree::setupEntries()
 {
-    TreeEntryCallback entries(tree);
+    TreeEntryCallback entries(tree, repo);
 
     treeEntries = entries.entries();
 }
@@ -38,6 +38,15 @@ git_tree *Tree::internalTree()
 QList<TreeEntry*> Tree::getEntriesList()
 {
     return treeEntries;
+}
+
+TreeEntry* Tree::getEntry(QString path)
+{
+    foreach(TreeEntry *entry, treeEntries)
+    {
+        if (entry->fullPath().compare(path) == 0)
+            return entry;
+    }
 }
 
 }

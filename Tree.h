@@ -10,6 +10,7 @@
 namespace AcGit
 {
     class Repository;
+    class TreeEntry;
 
     class Tree
     {
@@ -19,10 +20,11 @@ namespace AcGit
 
             Repository *getRepository();
             git_tree *internalTree();
-            TreeEntry entries();
+            TreeEntry *entries();
             QList<TreeEntry *> getEntriesList();
 
-        private:
+            TreeEntry *getEntry(QString path);
+    private:
             git_tree *tree;
             Repository *repo;
             QList<TreeEntry*> treeEntries;
