@@ -47,8 +47,10 @@ void Configuration::openConfigutation()
 
     // add global configuration
     char global[512];
-    git_config_find_global(global, 511);
-    git_config_add_file_ondisk(cfg, global, GIT_CONFIG_LEVEL_GLOBAL, 0);
+    if (git_config_find_global(global, 511) == 0)
+    {
+        git_config_add_file_ondisk(cfg, global, GIT_CONFIG_LEVEL_GLOBAL, 0);
+    }
 
 }
 
