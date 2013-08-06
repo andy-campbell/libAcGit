@@ -8,6 +8,7 @@ CONFIG += console
 CONFIG += debug
 
 QMAKE_CXXFLAGS += -std=c++11
+QMAKE_RPATHDIR += $$PWD/../../
 
 INCLUDEPATH += $$PWD/../../
 DEPENDPATH += $$PWD/../../
@@ -17,8 +18,8 @@ DEPENDPATH += $$PWD/../../
 #else:unix:
 LIBS += -L$$PWD/../../
 LIBS += -llibAcGit
+LIBS += -lgtest
 
 
 # Input
 SOURCES += Test-commit.cpp
-
