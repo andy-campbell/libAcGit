@@ -99,7 +99,7 @@ QString Commit::committer()
 {
     const git_signature* signature = git_commit_committer (commit);
 
-    return QString(signature->email);
+    return QString(signature->name);
 }
 
 QString Commit::committerEmail()
