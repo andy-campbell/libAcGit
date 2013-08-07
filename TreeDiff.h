@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "Tree.h"
 #include "Diff.h"
 #include "Gitexception.h"
+#include "Apiexception.h"
 
 namespace AcGit {
 

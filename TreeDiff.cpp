@@ -32,6 +32,11 @@ namespace AcGit
 
 TreeDiff::TreeDiff(Tree *treeOld, Tree *treeNew)
 {
+    if (treeNew == nullptr)
+    {
+        throw ApiException("Api Used incorrectly: treeNew was passed as a nullptr");
+    }
+
     try
     {
         git_repository* internalRepo = nullptr;

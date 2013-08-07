@@ -34,7 +34,8 @@ SOURCES += \
     Treeentrycallback.cpp \
     Tagger.cpp \
     Configuration.cpp \
-    Blob.cpp
+    Blob.cpp \
+    Apiexception.cpp
 
 HEADERS +=\
         libacgit_global.h \
@@ -63,4 +64,5 @@ HEADERS +=\
     Treeentrycallback.h \
     Tagger.h \
     Configuration.h \
-    Blob.h
+    Blob.h \
+    Apiexception.h

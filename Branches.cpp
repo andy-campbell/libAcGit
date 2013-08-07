@@ -206,7 +206,6 @@ void Branches::populateLocalBranches()
 void Branches::populateRemoteBranches()
 {
     //stub
-    qDebug() << "stub " << __FUNCTION__;
 }
 
 }
