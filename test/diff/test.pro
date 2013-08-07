@@ -8,16 +8,18 @@ CONFIG += console
 CONFIG += debug
 
 QMAKE_CXXFLAGS += -std=c++11 -fpermissive
+QMAKE_RPATHDIR += $$PWD/../../
 
 INCLUDEPATH += $$PWD/../../
 DEPENDPATH += $$PWD/../../
+
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../release/ -llibAcGit
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../debug/ -llibAcGit
 #else:unix:
 LIBS += -L$$PWD/../../
 LIBS += -llibAcGit
-
+LIBS += -lgtest
 
 # Input
 SOURCES += Test-diff.cpp
