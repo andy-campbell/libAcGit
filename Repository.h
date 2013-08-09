@@ -67,6 +67,8 @@ namespace AcGit
             Commit *HeadCommit();
 
             bool HasWorkingTreeChanges();
+
+            QString GitTopLevelDirectory();
     private:
             git_repository *repo;
             ICommits *commits;

@@ -113,4 +113,14 @@ bool Repository::HasWorkingTreeChanges()
     return hasChanges;
 }
 
+QString Repository::GitTopLevelDirectory()
+{
+    QString returnedPath = "";
+    const char *path = git_repository_path(repo);
+    if (path != nullptr)
+        returnedPath = QString (path);
+
+    return returnedPath;
+}
+
 }
