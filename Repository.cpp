@@ -39,20 +39,14 @@ namespace AcGit
 
 Repository::Repository(QString path)
 {
-    try
-    {
-        gitTest (git_repository_open(&repo, path.toLocal8Bit()));
+    char pathOut[512];
+    gitTest(git_repository_discover(pathOut, 512, path.toLocal8Bit(), true, "/"));
+    gitTest(git_repository_open(&repo, pathOut));
 
-        branches = new Branches(repo);
-        commits = new Commits(this);
-        tags = new Tags(this);
-        config = new Configuration(this);
-
-    }
-    catch (GitException e)
-    {
-        qDebug() << e.exceptionMessage();
-    }
+    branches = new Branches(repo);
+    commits = new Commits(this);
+    tags = new Tags(this);
+    config = new Configuration(this);
 }
 
 Repository::~Repository()
