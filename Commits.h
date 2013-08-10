@@ -46,13 +46,14 @@ namespace AcGit
             virtual void setSortingMode(SortMode mode);
 
             Commit* lookupCommit(Sha *sha);
-        private:
+    private:
             Repository *repo;
             SortMode currentSortMode;
             QList<Commit *> *CommitsList;
             QMap<QString ,Commit *> lookupMap;
 
 
+            void generateGraph();
             void addHeadCommit();
             void startRevWalk(git_revwalk *walker);
             void setStartCommit(git_revwalk *walker);

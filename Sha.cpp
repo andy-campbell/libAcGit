@@ -57,13 +57,36 @@ Sha::~Sha()
 QByteArray Sha::toString()
 {
     QByteArray shaString(GIT_OID_HEXSZ, Qt::Uninitialized);
-    git_oid_fmt(shaString.data(), sha);
+    if (sha != nullptr)
+    {
+        git_oid_fmt(shaString.data(), sha);
+    }
+    else
+    {
+        shaString = "0";
+    }
     return shaString;
 }
 
 bool Sha::operator ==(const Sha *sha)
 {
-    return git_oid_cmp( this->sha, sha->sha);
+    if (this->sha == nullptr && sha->sha == nullptr)
+    {
+        return true;
+    }
+    else
+    {
+        if (this->sha == nullptr)
+        {
+            return false;
+        }
+        else if (sha->sha == nullptr)
+        {
+            return false;
+        }
+    }
+
+    return git_oid_cmp( this->sha, sha->sha) == 0;
 }
 
 bool Sha::operator !=(const Sha *sha)

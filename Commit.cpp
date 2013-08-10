@@ -43,8 +43,19 @@ Commit::Commit(Repository *repo, Sha *commitSha)
     {
         commitLookupExecption (e);
     }
+    this->graph = nullptr;
 
     buildTree();
+    populateParentSha();
+}
+
+void Commit::populateParentSha()
+{
+    for(int parent = 0; parent < parentCount(); parent++)
+    {
+        const git_oid *parentSha = git_commit_parent_id(commit, parent);
+        parentShas.insert(parent, new Sha(parentSha));
+    }
 }
 
 void Commit::buildTree()
@@ -119,6 +130,16 @@ git_commit *Commit::rawCommit()
     return commit;
 }
 
+void Commit::addGraph(Graph *graph)
+{
+    this->graph = graph;
+}
+
+Graph *Commit::getGraph()
+{
+    return graph;
+}
+
 
 QDateTime Commit::dateCreated()
 {
@@ -127,5 +148,24 @@ QDateTime Commit::dateCreated()
     dateTime.setTime_t(time);
     return dateTime;
 }
+
+int Commit::parentCount()
+{
+    int numParents = git_commit_parentcount(commit);
+    return numParents;
+}
+
+Sha *Commit::parentSha(int index)
+{
+    Sha *parent;
+    if (index <= parentCount())
+    {
+        parent = parentShas.at(index);
+    }
+
+    return parent;
+}
+
+
 
 }

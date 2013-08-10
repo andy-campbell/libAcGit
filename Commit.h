@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include "Repository.h"
 #include "Gitexception.h"
 #include "Tree.h"
+#include "Graph.h"
 
 namespace AcGit
 {
@@ -59,13 +60,21 @@ namespace AcGit
 
             git_commit* rawCommit();
 
+            void addGraph(Graph* graph);
+            Graph* getGraph();
+
+            int parentCount();
+            Sha* parentSha(int index);
     private:
             void buildTree();
+            void populateParentSha();
 
-            Tree *commitTree;
+            Tree* commitTree;
             git_commit* commit;
+            Graph* graph;
             Repository* repo;
             void commitLookupExecption(GitException e);
+            QList<Sha *> parentShas;
     };
 
 }

@@ -35,7 +35,9 @@ SOURCES += \
     Tagger.cpp \
     Configuration.cpp \
     Blob.cpp \
-    Apiexception.cpp
+    Apiexception.cpp \
+    Commitgraph.cpp \
+    Graph.cpp
 
 HEADERS +=\
         libacgit_global.h \
@@ -65,4 +67,6 @@ HEADERS +=\
     Tagger.h \
     Configuration.h \
     Blob.h \
-    Apiexception.h
+    Apiexception.h \
+    Commitgraph.h \
+    Graph.h

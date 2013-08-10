@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include <QDebug>
 
 #include "Commits.h"
+#include "Commitgraph.h"
 
 namespace AcGit
 {
@@ -46,6 +47,8 @@ Commits::Commits(Repository *repo, SortMode mode)
         setStartCommit(walker);
 
         startRevWalk (walker);
+
+        generateGraph();
 
     }
     catch (GitException e)
@@ -73,7 +76,7 @@ void Commits::startRevWalk(git_revwalk* walker)
 
             Sha *shaForCommit = new Sha(shaCopy);
             Commit* commit = new Commit(repo, shaForCommit);
-            //qDebug() << commit->shortLog();
+
             CommitsList->append(commit);
             lookupMap.insert(shaForCommit->toString(), commit);
         }
@@ -135,6 +138,11 @@ void Commits::setSortingMode(SortMode mode)
 Commit *Commits::lookupCommit(Sha *sha)
 {
     return lookupMap.find(sha->toString()).value();
+}
+
+void Commits::generateGraph()
+{
+    CommitGraph *commitGraph = new CommitGraph(CommitsList);
 }
 
 }
