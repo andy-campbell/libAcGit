@@ -169,10 +169,13 @@ QList<Tag *> Tags::lookupTag(Sha *sha)
             matchFound = true;
         }
 
-        Sha tagTarget(git_tag_target_id(tag->rawTag()));
-        if (tagTarget.toString().contains(sha->toString()) == true)
+        if (tag->rawTag())
         {
-            matchFound = true;
+            Sha tagTarget(git_tag_target_id(tag->rawTag()));
+            if (tagTarget.toString().contains(sha->toString()) == true)
+            {
+                matchFound = true;
+            }
         }
 
         if (matchFound)
