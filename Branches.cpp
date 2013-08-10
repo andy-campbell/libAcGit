@@ -208,4 +208,30 @@ void Branches::populateRemoteBranches()
     //stub
 }
 
+QString Branches::currentBranch()
+{
+    git_reference *headRef;
+    QString currentBranchName = "No Branch";
+    try
+    {
+        int refType = GIT_REF_INVALID;
+        gitTest(git_repository_head (&headRef, repo));
+        refType = git_reference_type(headRef);
+        if (refType == GIT_REF_SYMBOLIC)
+        {
+            currentBranchName = QString(git_reference_symbolic_target(headRef));
+        }
+        else if (refType == GIT_REF_OID)
+        {
+            currentBranchName = QString(git_reference_name (headRef));
+        }
+    }
+    catch (GitException e)
+    {
+        qCritical() << __func__ << ":" << __LINE__ << " " << e.exceptionMessage();
+    }
+
+    return currentBranchName;
+}
+
 }

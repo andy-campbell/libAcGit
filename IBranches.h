@@ -63,6 +63,9 @@ namespace AcGit
             virtual Branch *lookupBranch(QString name) = 0;
 
             virtual QList<Branch *> lookupBranch(Sha *sha) = 0;
+
+            virtual QString currentBranch() = 0;
+
     };
 
     inline IBranches::~IBranches() {}
