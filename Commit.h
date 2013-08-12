@@ -56,7 +56,7 @@ namespace AcGit
             QString committer();
             QString committerEmail();
 
-            Tree *tree() const;
+            Tree *tree();
 
             git_commit* rawCommit();
 

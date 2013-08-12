@@ -44,8 +44,8 @@ Commit::Commit(Repository *repo, Sha *commitSha)
         commitLookupExecption (e);
     }
     this->graph = nullptr;
+    this->commitTree = nullptr;
 
-    buildTree();
     populateParentSha();
 }
 
@@ -120,8 +120,14 @@ QString Commit::committerEmail()
     return QString(signature->email);
 }
 
-Tree *Commit::tree() const
+Tree *Commit::tree()
 {
+    if(commitTree == nullptr)
+    {
+        buildTree();
+    }
+
+
     return commitTree;
 }
 
