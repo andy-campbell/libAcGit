@@ -33,7 +33,6 @@ Tag::Tag(QString name, Sha *sha, git_tag *tag)
     : Sha (sha)
 {
     this->tag = tag;
-    qDebug() << tagName;
     tagName = name;
 }
 
