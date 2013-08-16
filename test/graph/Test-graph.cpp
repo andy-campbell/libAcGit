@@ -157,7 +157,8 @@ TEST_F(GraphTestMergeBranch, test_for_repoCommitType) {
     // commit index 3
     commit = commitsAgent->getAllCommits()->at(3);
     graphOfCommit = commit->getGraph();
-    EXPECT_EQ (graphOfCommit->activeRowNumber(), AcGit::Graph::NORMAL_COMMIT);
+    EXPECT_EQ (graphOfCommit->activeRowNumber(), AcGit::Graph::BRANCH_COMMIT);
+
 
 }
 
@@ -167,23 +168,27 @@ TEST_F(GraphTestMergeBranch, test_for_RepoTotalRows) {
 
     // commit index 0
     commit = commitsAgent->getAllCommits()->at(0);
-    graphOfCommit= commit->getGraph();
-    EXPECT_EQ (graphOfCommit->getTotalRows(), 1);
+    graphOfCommit = commit->getGraph();
+    qDebug() << "expected: 2 got: " <<  graphOfCommit->getTotalRows();
+    EXPECT_EQ (graphOfCommit->getTotalRows(), 2);
 
     // commit index 1
     commit = commitsAgent->getAllCommits()->at(1);
     graphOfCommit = commit->getGraph();
+    qDebug() << "expected: 2 got: " <<  graphOfCommit->getTotalRows();
     EXPECT_EQ (graphOfCommit->getTotalRows(), 2);
 
     // commit index 2
     commit = commitsAgent->getAllCommits()->at(2);
     graphOfCommit = commit->getGraph();
+    qDebug() << "expected: 2 got: " <<  graphOfCommit->getTotalRows();
     EXPECT_EQ (graphOfCommit->getTotalRows(), 2);
 
     // commit index 3
     commit = commitsAgent->getAllCommits()->at(3);
     graphOfCommit = commit->getGraph();
-    EXPECT_EQ (graphOfCommit->getTotalRows(), 1);
+    qDebug() << "expected: 2 got: " <<  graphOfCommit->getTotalRows();
+    EXPECT_EQ (graphOfCommit->getTotalRows(), 2);
 
 }
 
@@ -196,29 +201,233 @@ TEST_F(GraphTestMergeBranch, test_for_RepoRowState) {
     commit = commitsAgent->getAllCommits()->at(0);
     graphOfCommit= commit->getGraph();
     laneState = graphOfCommit->rowState();
-    EXPECT_EQ (laneState->at(0), AcGit::Graph::NORMAL_COMMIT);
-    EXPECT_EQ (laneState->at(1), AcGit::Graph::BRANCH_COMMIT_UP);
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::MERGE_COMMIT);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::MERGE_COMMIT_DOWN);
 
     // commit index 1
-    commit = commitsAgent->getAllCommits()->at(1);
-    graphOfCommit = commit->getGraph();
-    laneState = graphOfCommit->rowState();
-    EXPECT_EQ (laneState->at(0), AcGit::Graph::NO_COMMIT_H);
-    EXPECT_EQ (laneState->at(1), AcGit::Graph::NORMAL_COMMIT);
-
-    // commit index 2
     commit = commitsAgent->getAllCommits()->at(1);
     graphOfCommit = commit->getGraph();
     laneState = graphOfCommit->rowState();
     EXPECT_EQ (laneState->at(0), AcGit::Graph::NORMAL_COMMIT);
     EXPECT_EQ (laneState->at(1), AcGit::Graph::NO_COMMIT_H);
 
+    // commit index 2
+    commit = commitsAgent->getAllCommits()->at(2);
+    graphOfCommit = commit->getGraph();
+    laneState = graphOfCommit->rowState();
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::NO_COMMIT_H);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::NORMAL_COMMIT);
+
     // commit index 3
+    commit = commitsAgent->getAllCommits()->at(3);
+    graphOfCommit = commit->getGraph();
+    laneState = graphOfCommit->rowState();
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::BRANCH_COMMIT);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::BRANCH_COMMIT_UP);
+
+    for(int i = 0; i < commitsAgent->getAllCommits()->length(); i++)
+    {
+        commit = commitsAgent->getAllCommits()->at(i);
+        qDebug() << commit->shortLog();
+        graphOfCommit = commit->getGraph();
+        qDebug() << graphOfCommit->getTotalRows();
+        for (int j = 0; j < graphOfCommit->rowState()->size(); j++)
+        {
+            AcGit::Graph::GraphSymbol symbol = graphOfCommit->rowState()->at(j);
+
+            qDebug() << symbol;
+        }
+    }
+
+}
+
+
+
+class GraphTestMultiMergeBranch : public testing::Test
+{
+protected:
+    virtual void SetUp()
+    {
+        system("cp -r ../multimergerepo/ ../tmptestrepo/");
+        QString temp = "../tmptestrepo/";
+        repo = new AcGit::Repository(temp);
+        commitsAgent = repo->CommitsAgent();
+
+    }
+
+    virtual void TearDown() {
+        system("rm -rf ../tmptestrepo/");
+    }
+    AcGit::Repository *repo;
+    AcGit::ICommits *commitsAgent;
+};
+
+
+/**
+ * Commit order form their shorts
+ *
+ * Merge Commit
+ * Commit Work Branch
+ * Commit Master xyz
+ * Test Commit
+ *
+ */
+
+TEST_F(GraphTestMultiMergeBranch, test_for_ActiveRowCommit) {
+    AcGit::Commit *commit;
+    AcGit::Graph *graphOfCommit;
+
+
+
+    // commit index 0
+    commit = commitsAgent->getAllCommits()->at(0);
+    graphOfCommit= commit->getGraph();
+    EXPECT_EQ (graphOfCommit->activeRowNumber(), 0);
+
+    // commit index 1
+    commit = commitsAgent->getAllCommits()->at(1);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->activeRowNumber(), 0);
+
+    // commit index 2
+    commit = commitsAgent->getAllCommits()->at(2);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->activeRowNumber(), 2);
+
+    // commit index 3
+    commit = commitsAgent->getAllCommits()->at(3);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->activeRowNumber(), 1);
+
+    // commit index 4
+    commit = commitsAgent->getAllCommits()->at(4);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->activeRowNumber(), 0);
+
+}
+
+TEST_F(GraphTestMultiMergeBranch, test_for_repoCommitType) {
+    AcGit::Commit *commit;
+    AcGit::Graph *graphOfCommit;
+
+    // commit index 0
+    commit = commitsAgent->getAllCommits()->at(0);
+    graphOfCommit= commit->getGraph();
+    EXPECT_EQ (graphOfCommit->typeOfRow(), AcGit::Graph::MERGE_COMMIT);
+
+    // commit index 1
+    commit = commitsAgent->getAllCommits()->at(1);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->typeOfRow(), AcGit::Graph::NORMAL_COMMIT);
+
+    // commit index 2
+    commit = commitsAgent->getAllCommits()->at(2);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->typeOfRow(), AcGit::Graph::NORMAL_COMMIT);
+
+    // commit index 3
+    commit = commitsAgent->getAllCommits()->at(3);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->typeOfRow(), AcGit::Graph::NORMAL_COMMIT);
+
+    qDebug() << "LEN: " << commitsAgent->getAllCommits()->length();
+    // commit index 4
+    commit = commitsAgent->getAllCommits()->at(4);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->activeRowNumber(), AcGit::Graph::BRANCH_COMMIT);
+
+
+}
+
+TEST_F(GraphTestMultiMergeBranch, test_for_RepoTotalRows) {
+    AcGit::Commit *commit;
+    AcGit::Graph *graphOfCommit;
+
+    // commit index 0
+    commit = commitsAgent->getAllCommits()->at(0);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->getTotalRows(), 3);
+
+    // commit index 1
+    commit = commitsAgent->getAllCommits()->at(1);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->getTotalRows(), 3);
+
+    // commit index 2
+    commit = commitsAgent->getAllCommits()->at(2);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->getTotalRows(), 3);
+
+    // commit index 3
+    commit = commitsAgent->getAllCommits()->at(3);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->getTotalRows(), 3);
+
+    // commit index 4
+    commit = commitsAgent->getAllCommits()->at(3);
+    graphOfCommit = commit->getGraph();
+    EXPECT_EQ (graphOfCommit->getTotalRows(), 3);
+
+}
+
+TEST_F(GraphTestMultiMergeBranch, test_for_RepoRowState) {
+    AcGit::Commit *commit;
+    AcGit::Graph *graphOfCommit;
+    QVector<enum AcGit::Graph::GraphSymbol> *laneState;
+
+    // commit index 0
+    commit = commitsAgent->getAllCommits()->at(0);
+    graphOfCommit= commit->getGraph();
+    laneState = graphOfCommit->rowState();
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::MERGE_COMMIT);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::MERGE_COMMIT_DOWN_H);
+    EXPECT_EQ (laneState->at(2), AcGit::Graph::MERGE_COMMIT_DOWN);
+
+    // commit index 1
     commit = commitsAgent->getAllCommits()->at(1);
     graphOfCommit = commit->getGraph();
     laneState = graphOfCommit->rowState();
-    EXPECT_EQ (laneState->at(0), AcGit::Graph::MERGE_COMMIT);
-    EXPECT_EQ (laneState->at(1), AcGit::Graph::MERGE_COMMIT_DOWN);
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::NORMAL_COMMIT);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::NO_COMMIT);
+    EXPECT_EQ (laneState->at(2), AcGit::Graph::NO_COMMIT);
+
+    // commit index 2
+    commit = commitsAgent->getAllCommits()->at(2);
+    graphOfCommit = commit->getGraph();
+    laneState = graphOfCommit->rowState();
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::NO_COMMIT);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::NO_COMMIT);
+    EXPECT_EQ (laneState->at(2), AcGit::Graph::NORMAL_COMMIT);
+
+    // commit index 3
+    commit = commitsAgent->getAllCommits()->at(3);
+    graphOfCommit = commit->getGraph();
+    laneState = graphOfCommit->rowState();
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::NO_COMMIT);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::NORMAL_COMMIT);
+    EXPECT_EQ (laneState->at(2), AcGit::Graph::NO_COMMIT);
+
+    // commit index 4
+    commit = commitsAgent->getAllCommits()->at(4);
+    graphOfCommit = commit->getGraph();
+    laneState = graphOfCommit->rowState();
+    EXPECT_EQ (laneState->at(0), AcGit::Graph::BRANCH_COMMIT);
+    EXPECT_EQ (laneState->at(1), AcGit::Graph::BRANCH_COMMIT_UP_H);
+    EXPECT_EQ (laneState->at(2), AcGit::Graph::BRANCH_COMMIT_UP);
+
+    for(int i = 0; i < commitsAgent->getAllCommits()->length(); i++)
+    {
+        commit = commitsAgent->getAllCommits()->at(i);
+        qDebug() << commit->shortLog();
+        graphOfCommit = commit->getGraph();
+        qDebug() << "TOTOAL ROWS" << graphOfCommit->getTotalRows();
+        for (int j = 0; j < graphOfCommit->rowState()->size(); j++)
+        {
+            AcGit::Graph::GraphSymbol symbol = graphOfCommit->rowState()->at(j);
+
+            qDebug() << symbol;
+        }
+    }
 }
 
 
