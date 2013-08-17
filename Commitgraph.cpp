@@ -436,7 +436,7 @@ Graph* CommitGraph::populateCommit(Commit &commit, QVector<Sha> &nextCommits, Gr
     }
 
     QVector<enum Graph::GraphSymbol> *laneState;
-    if(type == Graph::NORMAL_COMMIT && prevCommit && prevCommit->activeRowNumber() == activeRow )
+    if(type == Graph::NORMAL_COMMIT && prevCommit && prevCommit->typeOfRow() == Graph::NORMAL_COMMIT && prevCommit->activeRowNumber() == activeRow )
     {
         laneState = prevCommit->rowState();
     }
@@ -451,7 +451,7 @@ Graph* CommitGraph::populateCommit(Commit &commit, QVector<Sha> &nextCommits, Gr
         {
             maxRows = prevCommit->getTotalRows();
         }
-        laneState = buildUpLane(branchedToRow, mergeFromRow, nextCommits, activeRow,type, nextCommits.size(), maxRows);
+        laneState = buildUpLane(branchedToRow, mergeFromRow, nextCommits, activeRow, type, nextCommits.size(), maxRows);
     }
     return new Graph (activeRow, laneState, nextCommits.size(), type);
 
