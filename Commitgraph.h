@@ -18,6 +18,8 @@ class CommitGraph
 public:
     CommitGraph(QList<Commit *> *CommitsList);
 private:
+    void removeZeroShasFromEnd(QVector<Sha> &nextCommits, int activeRow);
+    Graph::GraphSymbol getLaneType(bool isAMergeCommit, int childCount);
     bool branchMergeAppend(QVector<Graph::GraphSymbol> *currentRowState, Graph::GraphSymbol type, int &numHandled, int size, bool handledLast);
     void handleRowTypeNotEqual(QVector<Graph::GraphSymbol> *currentRowState, bool emptyCommit, bool handledLast);
     bool appendRowTypeEqual(QVector<Graph::GraphSymbol> *currentRowState, Graph::GraphSymbol type, int &numHandled, int size);

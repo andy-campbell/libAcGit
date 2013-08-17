@@ -288,8 +288,53 @@ QVector<enum Graph::GraphSymbol> *CommitGraph::buildUpLane(QSet<int> branchedToR
     return currentRowState;
 }
 
+
+enum Graph::GraphSymbol CommitGraph::getLaneType(bool isAMergeCommit, int commitIsParentOfCount)
+{
+    Graph::GraphSymbol type = Graph::NO_COMMIT;
+
+
+    if (isAMergeCommit && commitIsParentOfCount == 1)
+    {
+        type = Graph::MERGE_COMMIT;
+    }
+
+    if (isAMergeCommit && commitIsParentOfCount > 1)
+    {
+        type = Graph::BRANCH_MERGE_COMMIT;
+    }
+
+    if (!isAMergeCommit && commitIsParentOfCount > 1)
+    {
+        type = Graph::BRANCH_COMMIT;
+    }
+
+    if (!isAMergeCommit && commitIsParentOfCount == 1)
+    {
+        type = Graph::NORMAL_COMMIT;
+    }
+    return type;
+}
+
+void CommitGraph::removeZeroShasFromEnd(QVector<Sha> &nextCommits, int activeRow)
+{
+    for (int removeIndex = nextCommits.size() - 1; removeIndex > activeRow + 1; removeIndex--)
+    {
+        AcGit::Sha zero;
+        if (nextCommits[removeIndex] == &zero)
+        {
+            nextCommits.remove(removeIndex);
+        }
+        else
+        {
+            // break early if index isn't a empty index.
+            break;
+        }
+    }
+}
+
 /**
- * @brief acRepo::populateCommit This function works out what type of commit it is (eg a branch commit / a
+ * @brief populateCommit This function works out what type of commit it is (eg a branch commit / a
  * merge commit / a branches merge commit or just a normal commit ). This information is then used
  * to create a Commit object.
  *
@@ -330,20 +375,7 @@ Graph* CommitGraph::populateCommit(Commit &commit, QVector<Sha> &nextCommits, Gr
         }
     }
 
-    // reduces size of nextCommits
-    for (int removeIndex = nextCommits.size() - 1; removeIndex > activeRow + 1; removeIndex--)
-    {
-        AcGit::Sha zero;
-        if (nextCommits[removeIndex] == &zero)
-        {
-            nextCommits.remove(removeIndex);
-        }
-        else
-        {
-            // break early if index isn't a empty index.
-            break;
-        }
-    }
+    removeZeroShasFromEnd(nextCommits, activeRow);
 
     // Loops over parents of this commit and add to nextCommits List.
     for (int i = 0; i < commit.parentCount() && commit.parentCount() > 1; i++)
@@ -371,23 +403,10 @@ Graph* CommitGraph::populateCommit(Commit &commit, QVector<Sha> &nextCommits, Gr
         mergeCommit = true;
     }
 
-    if (mergeCommit && count == 1)
-    {
-        type = Graph::MERGE_COMMIT;
-    }
+    type = getLaneType(mergeCommit, count);
 
-    // if merge commit and child count > 1 then we have a merge commit
-    if (mergeCommit && count > 1)
+    if (type == Graph::BRANCH_COMMIT)
     {
-        type = Graph::BRANCH_MERGE_COMMIT;
-    }
-
-    // child count is more than 1 so we have a branch
-    if (!mergeCommit && count > 1)
-    {
-        // remove current commits that match commit
-        type = Graph::BRANCH_COMMIT;
-
         // make sure this isn't the last commit
         if (commit.parentCount() != 0)
         {
@@ -410,10 +429,8 @@ Graph* CommitGraph::populateCommit(Commit &commit, QVector<Sha> &nextCommits, Gr
         }
     }
 
-    // only one parent and only one child means this must be a commits
-    if (!mergeCommit && count == 1)
+    if (type == Graph::NORMAL_COMMIT)
     {
-        type = Graph::NORMAL_COMMIT;
         if (commit.parentCount() != 0)
         {
              nextCommits[activeRow] = commit.parentSha(0);
