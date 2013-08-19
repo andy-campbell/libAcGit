@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "Tag.h"
 #include "Tags.h"
 #include "Workingdirdiff.h"
+#include "Stagingdirdiff.h"
 
 #include <QDebug>
 #include <QList>
@@ -100,17 +101,29 @@ Commit* Repository::HeadCommit()
     return commit;
 }
 
-bool Repository::HasWorkingTreeChanges()
+bool Repository::hasChanges(Diff &diff)
 {
     bool hasChanges = false;
-    WorkingDirDiff diff(HeadCommit()->tree());
-
     if (diff.fileList().size() != 0)
     {
         hasChanges = true;
     }
 
     return hasChanges;
+
+}
+
+bool Repository::HasWorkingTreeChanges()
+{
+    WorkingDirDiff diff(HeadCommit()->tree());
+    return hasChanges(diff);
+}
+
+bool Repository::HasStagingDirChanges()
+{
+    StagingDirDiff diff(HeadCommit()->tree());
+    return hasChanges(diff);
+
 }
 
 QString Repository::GitTopLevelDirectory()

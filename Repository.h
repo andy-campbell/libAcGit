@@ -49,6 +49,7 @@ namespace AcGit
     class Commit;
     class ITags;
     class Configuration;
+    class Diff;
 
     class LIBACGITREPOSITORY_EXPORT Repository
     {
@@ -67,6 +68,7 @@ namespace AcGit
             Commit *HeadCommit();
 
             bool HasWorkingTreeChanges();
+            bool HasStagingDirChanges();
 
             QString GitTopLevelDirectory();
     private:
@@ -76,6 +78,7 @@ namespace AcGit
             ITags *tags;
             Configuration *config;
             bool hasWorkingTreeChanges;
+            bool hasChanges(Diff &diff);
     };
 
 }

@@ -37,7 +37,8 @@ SOURCES += \
     Blob.cpp \
     Apiexception.cpp \
     Commitgraph.cpp \
-    Graph.cpp
+    Graph.cpp \
+    Stagingdirdiff.cpp
 
 HEADERS +=\
         libacgit_global.h \
@@ -69,4 +70,5 @@ HEADERS +=\
     Blob.h \
     Apiexception.h \
     Commitgraph.h \
-    Graph.h
+    Graph.h \
+    Stagingdirdiff.h

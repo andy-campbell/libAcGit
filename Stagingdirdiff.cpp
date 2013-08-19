@@ -25,38 +25,40 @@ THE SOFTWARE.
 
 #include <QDebug>
 
-#include "Workingdirdiff.h"
+#include "Stagingdirdiff.h"
 #include "Commit.h"
 
 namespace AcGit
 {
 
-WorkingDirDiff::WorkingDirDiff(Tree *headCommitTree)
+StagingDirDiff::StagingDirDiff(Tree *headCommitTree)
 {
     // get the diff
+    qDebug() << "Called";
     const git_diff_options options = GIT_DIFF_OPTIONS_INIT;
     Repository *repo = headCommitTree->getRepository();
 
 
     try
     {
-        gitTest(git_diff_index_to_workdir(&differences, repo->getInternalRepo(),
-                                          nullptr,  &options));
+        gitTest(git_diff_tree_to_index(&differences, repo->getInternalRepo(),
+                                       headCommitTree->internalTree() , nullptr,  &options));
     }
     catch(GitException e)
     {
-        workingTreeDiffException(e);
+        stagingTreeDiffException(e);
     }
 
     processDifferences();
+    qDebug() << "staging: " << this->diffStats();
 }
 
-WorkingDirDiff::~WorkingDirDiff()
+StagingDirDiff::~StagingDirDiff()
 {
 
 }
 
-void WorkingDirDiff::workingTreeDiffException(GitException e)
+void StagingDirDiff::stagingTreeDiffException(GitException e)
 {
     qCritical() << __func__ << ":" << __LINE__<< " " << e.what();
 }
