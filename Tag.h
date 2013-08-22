@@ -46,6 +46,7 @@ namespace AcGit
 
             Tagger *getTagger();
             const git_tag *rawTag();
+            Sha *tagTarget();
     private:
             QString tagName;
             git_tag *tag;

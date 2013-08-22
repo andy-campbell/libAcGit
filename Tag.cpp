@@ -68,6 +68,14 @@ Tagger* Tag::getTagger()
     return tagger;
 }
 
+Sha *Tag::tagTarget()
+{
+    Sha *targetSha = nullptr;
+\
+    targetSha = new Sha(git_tag_target_id(tag));
+    return targetSha;
+}
+
 const git_tag *Tag::rawTag()
 {
     return tag;
