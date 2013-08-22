@@ -137,16 +137,7 @@ void Branches::moveBranch(Branch *branch, QString newBranchName, int force)
 
 Branch *Branches::lookupBranch(QString name)
 {
-    //TODO optomize
-    foreach (Branch *branch, localBranches)
-    {
-        if (branch->getRefName().compare(name) == 0)
-        {
-            return branch;
-        }
-    }
-
-    foreach (Branch *branch, remoteBranches)
+    foreach (Branch *branch, getAllBranches())
     {
         if (branch->getRefName().compare(name) == 0)
         {
@@ -160,7 +151,7 @@ Branch *Branches::lookupBranch(QString name)
 QList<Branch *> Branches::lookupBranch(Sha *sha)
 {
     QList<Branch *> matchingBranches;
-    foreach (Branch *branch, localBranches)
+    foreach (Branch *branch, getAllBranches())
     {
         if (branch->toString().contains(sha->toString()))
         {
@@ -168,6 +159,7 @@ QList<Branch *> Branches::lookupBranch(Sha *sha)
 
         }
     }
+
     return matchingBranches;
 }
 
@@ -185,6 +177,22 @@ void Branches::createLocalBranch(QString branchName)
 
     localBranches << branch;
 }
+
+void Branches::createRemoteBranch(QString branchName)
+{
+    git_oid sha;
+    Branch *branch = nullptr;
+
+    git_oid *shaCopy = (git_oid *)malloc (sizeof(struct git_oid));
+    QString refName = "refs/remotes/" + branchName;
+    gitTest( git_reference_name_to_id(&sha, repo, refName.toLocal8Bit()));
+
+    git_oid_cpy(shaCopy, &sha);
+    branch = new Branch(branchName, new Sha(shaCopy), false);
+
+    remoteBranches << branch;
+}
+
 
 void Branches::populateLocalBranches()
 {
@@ -205,7 +213,19 @@ void Branches::populateLocalBranches()
 
 void Branches::populateRemoteBranches()
 {
-    //stub
+    BranchesCallBack branches(repo, BranchesCallBack::BRANCH_REMOTE);
+
+    foreach (QString branchName, branches.getBranches())
+    {
+        try
+        {
+            createRemoteBranch(branchName);
+        }
+        catch (GitException e)
+        {
+            qCritical() << __func__ << ":" << __LINE__ << " " << e.exceptionMessage();
+        }
+    }
 }
 
 QString Branches::currentBranch()

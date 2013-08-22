@@ -62,6 +62,7 @@ namespace AcGit
     private:
 
             void createLocalBranch(QString branchName);
+            void createRemoteBranch(QString branchName);
             void populateRemoteBranches();
             void populateLocalBranches();
 
