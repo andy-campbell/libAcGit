@@ -45,7 +45,7 @@ QByteArray GitException::exceptionMessage() const throw()
 
 int GitException::returnValue()
 {
-    int returnVal;
+    return returnVal;
 }
 
 int gitTest(int ret)

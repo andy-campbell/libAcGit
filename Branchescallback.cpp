@@ -29,6 +29,8 @@ THE SOFTWARE.
 extern "C" int branchesCallBack(const char *branchName, git_branch_t branchType,
                                 void *payload)
 {
+    // we ask for a specific type in the constructor
+    Q_UNUSED(branchType);
     reinterpret_cast<BranchesCallBack*> (payload)->addBranch(branchName);
 
     // we want to continue looping so return 0

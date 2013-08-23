@@ -30,6 +30,12 @@ namespace AcGit
 extern "C" int printCB(  const git_diff_delta *delta, const git_diff_range *range,
                          char usage, const char *line, size_t line_len, void *payload)
 {
+    Q_UNUSED(delta);
+    Q_UNUSED(range);
+    Q_UNUSED(usage);
+    Q_UNUSED(line);
+    Q_UNUSED(line_len);
+
     reinterpret_cast<DiffPrintCallBack*> (payload)->addToPAtch(line);
 
     return 0;

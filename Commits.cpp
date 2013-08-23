@@ -150,7 +150,8 @@ Commit *Commits::lookupCommit(Sha *sha)
 
 void Commits::generateGraph()
 {
-    CommitGraph *commitGraph = new CommitGraph(CommitsList);
+    CommitGraph commitGraph(CommitsList);
+    Q_UNUSED(commitGraph);
 }
 
 }

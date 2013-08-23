@@ -32,6 +32,7 @@ namespace AcGit
 
 extern "C" int fileDiffCallBack(const git_diff_delta *delta,float progress,void *payload)
 {
+    Q_UNUSED(progress);
     reinterpret_cast<DiffCallBack*> (payload)->addFileChanged(delta);
     // we want to continue looping so return 0
     return 0;
@@ -41,6 +42,7 @@ extern "C" int fileDiffCallBack(const git_diff_delta *delta,float progress,void 
 extern "C" int addPatchHunksCallBack( const git_diff_delta *delta, const git_diff_range *range,
                                         const char *header, size_t header_len, void *payload)
 {
+    Q_UNUSED(range);
     reinterpret_cast<DiffCallBack*> (payload)->addPatchHunks(delta, header, header_len);
     // we want to continue looping so return 0
     return 0;
@@ -50,6 +52,7 @@ extern "C" int addPatchHunksCallBack( const git_diff_delta *delta, const git_dif
 extern "C" int addPatchLinesCallBack(const git_diff_delta *delta, const git_diff_range *range,
                                         char usage, const char *line, size_t line_len, void *payload)
 {
+    Q_UNUSED(range);
     reinterpret_cast<DiffCallBack*> (payload)->addPatchLines(delta, line, usage, line_len);
     // we want to continue looping so return 0
     return 0;
