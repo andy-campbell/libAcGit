@@ -137,7 +137,15 @@ void Commits::setSortingMode(SortMode mode)
 
 Commit *Commits::lookupCommit(Sha *sha)
 {
-    return lookupMap.find(sha->toString()).value();
+    Commit *commit = nullptr;
+    QMap<QString ,Commit *>::iterator commitItor;
+    commitItor = lookupMap.find(sha->toString());
+    if (commitItor != lookupMap.end())
+    {
+        commit = commitItor.value();
+    }
+
+    return commit;
 }
 
 void Commits::generateGraph()
