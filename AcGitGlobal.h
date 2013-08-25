@@ -35,5 +35,6 @@ THE SOFTWARE.
 #include "TreeDiff.h"
 #include "Workingdirdiff.h"
 #include "Gitexception.h"
+#include "Stagingdirdiff.h"
 
 #endif // ACGITGLOBAL_H
