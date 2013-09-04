@@ -56,6 +56,7 @@ namespace AcGit
 
         public:
             Repository(QString path);
+            Repository(git_repository *internalRepo);
 
             ~Repository();
 
@@ -79,6 +80,7 @@ namespace AcGit
             Configuration *config;
             bool hasWorkingTreeChanges;
             bool hasChanges(Diff &diff);
+            void initaliseRepo();
     };
 
 }

@@ -36,5 +36,6 @@ THE SOFTWARE.
 #include "Workingdirdiff.h"
 #include "Gitexception.h"
 #include "Stagingdirdiff.h"
+#include "Clone.h"
 
 #endif // ACGITGLOBAL_H

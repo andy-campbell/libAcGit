@@ -43,7 +43,17 @@ Repository::Repository(QString path)
     char pathOut[512];
     gitTest(git_repository_discover(pathOut, 512, path.toLocal8Bit(), true, "/"));
     gitTest(git_repository_open(&repo, pathOut));
+    initaliseRepo();
+}
 
+Repository::Repository(git_repository *internalRepo)
+{
+    repo = internalRepo;
+    initaliseRepo();
+}
+
+void Repository::initaliseRepo()
+{
     branches = new Branches(repo);
     commits = new Commits(this);
     tags = new Tags(this);
