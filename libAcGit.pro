@@ -40,7 +40,8 @@ SOURCES += \
     Graph.cpp \
     Stagingdirdiff.cpp \
     Credintials.cpp \
-    Clone.cpp
+    Clone.cpp \
+    Reset.cpp
 
 HEADERS +=\
         libacgit_global.h \
@@ -75,4 +76,6 @@ HEADERS +=\
     Graph.h \
     Stagingdirdiff.h \
     Credintials.h \
-    Clone.h
+    Clone.h \
+    IReset.h \
+    Reset.h

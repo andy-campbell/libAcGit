@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "Gitexception.h"
 #include "Tag.h"
 #include "Tags.h"
+#include "Reset.h"
 #include "Workingdirdiff.h"
 #include "Stagingdirdiff.h"
 
@@ -58,6 +59,7 @@ void Repository::initaliseRepo()
     commits = new Commits(this);
     tags = new Tags(this);
     config = new Configuration(this);
+    reset = new Reset(this);
 }
 
 Repository::~Repository()
@@ -79,6 +81,11 @@ ICommits *Repository::CommitsAgent()
 ITags *Repository::TagsAgent()
 {
     return tags;
+}
+
+IReset *Repository::ResetAgent()
+{
+    return reset;
 }
 
 git_repository* Repository::getInternalRepo()

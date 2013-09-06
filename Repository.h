@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include "ICommits.h"
 #include "IBranches.h"
 #include "ITags.h"
+#include "IReset.h"
 #include "Configuration.h"
 
 #if defined(LIBACGIT_LIBRARY)
@@ -48,6 +49,7 @@ namespace AcGit
     class ICommits;
     class Commit;
     class ITags;
+    class IReset;
     class Configuration;
     class Diff;
 
@@ -67,6 +69,7 @@ namespace AcGit
             ITags *TagsAgent();
             Configuration *ConfigurationAgent();
             Commit *HeadCommit();
+            IReset *ResetAgent();
 
             bool HasWorkingTreeChanges();
             bool HasStagingDirChanges();
@@ -77,6 +80,7 @@ namespace AcGit
             ICommits *commits;
             IBranches *branches;
             ITags *tags;
+            IReset *reset;
             Configuration *config;
             bool hasWorkingTreeChanges;
             bool hasChanges(Diff &diff);
