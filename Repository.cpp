@@ -127,7 +127,6 @@ bool Repository::hasChanges(Diff &diff)
     }
 
     return hasChanges;
-
 }
 
 bool Repository::HasWorkingTreeChanges()
@@ -140,7 +139,6 @@ bool Repository::HasStagingDirChanges()
 {
     StagingDirDiff diff(HeadCommit()->tree());
     return hasChanges(diff);
-
 }
 
 QString Repository::GitTopLevelDirectory()
