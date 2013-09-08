@@ -34,7 +34,6 @@ namespace AcGit
 StagingDirDiff::StagingDirDiff(Tree *headCommitTree)
 {
     // get the diff
-    qDebug() << "Called";
     const git_diff_options options = GIT_DIFF_OPTIONS_INIT;
     Repository *repo = headCommitTree->getRepository();
 
@@ -50,7 +49,6 @@ StagingDirDiff::StagingDirDiff(Tree *headCommitTree)
     }
 
     processDifferences();
-    qDebug() << "staging: " << this->diffStats();
 }
 
 StagingDirDiff::~StagingDirDiff()
