@@ -48,6 +48,10 @@ extern "C" int cred_acquire(git_cred **out,
                 unsigned int allowed_types,
                 void * payload)
 {
+    Q_UNUSED(url);
+    Q_UNUSED(username_from_url);
+    Q_UNUSED(allowed_types);
+
     Credintials creds = reinterpret_cast<Clone*> (payload)->aquireCredentials();
     QString password = creds.getPassword();
     QString username = creds.getUsername();
