@@ -151,4 +151,14 @@ QString Repository::GitTopLevelDirectory()
     return returnedPath;
 }
 
+int Repository::AheadBehind(Sha* from, Sha* to)
+{
+    size_t ahead;
+    size_t behind;
+
+    gitTest(git_graph_ahead_behind(&ahead, &behind, repo, from->raw(), to->raw()));
+
+    return ahead - behind;
+}
+
 }

@@ -75,6 +75,7 @@ namespace AcGit
             bool HasStagingDirChanges();
 
             QString GitTopLevelDirectory();
+            int AheadBehind(Sha *from, Sha *to);
     private:
             git_repository *repo;
             ICommits *commits;
