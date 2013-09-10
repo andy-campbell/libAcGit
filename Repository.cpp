@@ -161,4 +161,26 @@ int Repository::AheadBehind(Sha* from, Sha* to)
     return ahead - behind;
 }
 
+
+//TODO make this function more efficient. Don't reload everything.
+void Repository::Update()
+{
+    if(branches)
+        delete branches;
+
+    if(commits)
+        delete commits;
+
+    if(tags)
+        delete tags;
+
+    if(config)
+        delete config;
+
+    branches = new Branches(repo);
+    commits = new Commits(this);
+    tags = new Tags(this);
+    config = new Configuration(this);
+}
+
 }

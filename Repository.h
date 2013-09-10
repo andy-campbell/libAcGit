@@ -76,6 +76,7 @@ namespace AcGit
 
             QString GitTopLevelDirectory();
             int AheadBehind(Sha *from, Sha *to);
+            void Update();
     private:
             git_repository *repo;
             ICommits *commits;
