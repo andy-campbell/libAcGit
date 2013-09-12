@@ -167,7 +167,6 @@ void Branches::createLocalBranch(QString branchName)
 {
     git_oid sha;
     Branch *branch = nullptr;
-
     git_oid *shaCopy = (git_oid *)malloc (sizeof(struct git_oid));
     QString refName = "refs/heads/" + branchName;
     gitTest( git_reference_name_to_id(&sha, repo, refName.toLocal8Bit()));
@@ -252,6 +251,20 @@ QString Branches::currentBranch()
     }
 
     return currentBranchName;
+}
+
+void Branches::updateActiveBranch()
+{
+    QString activeBranchName = currentBranch();
+
+    Branch* activeBranch = lookupBranch(activeBranchName);
+    activeBranch->getRefName();
+    localBranches.removeOne(activeBranch);
+
+    delete activeBranch;
+
+    activeBranchName = activeBranchName.right(activeBranchName.length() - activeBranchName.lastIndexOf('/') - 1);
+    createLocalBranch(activeBranchName);
 }
 
 }

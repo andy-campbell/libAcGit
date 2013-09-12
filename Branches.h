@@ -59,6 +59,8 @@ namespace AcGit
             virtual QList<Branch *> lookupBranch(Sha *sha);
 
             virtual QString currentBranch();
+
+            void updateActiveBranch();
     private:
 
             void createLocalBranch(QString branchName);

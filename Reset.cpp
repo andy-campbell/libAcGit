@@ -48,6 +48,8 @@ void Reset::resetToTarget(Sha *target, resetType type)
     git_object* targetObject;
     gitTest(git_object_lookup(&targetObject, repo->getInternalRepo(), target->raw(), GIT_OBJ_ANY));
     gitTest(git_reset(repo->getInternalRepo(), targetObject, internalType));
+
+    repo->Update();
 }
 
 git_reset_t Reset::getInternalType(resetType type)

@@ -42,11 +42,11 @@ Commits::Commits(Repository *repo, SortMode mode)
 
         gitTest(git_revwalk_new(&walker, repo->getInternalRepo()));
 
-        applySortMode(walker);
+        applySortMode(walker, false);
 
-        setStartCommit(walker);
+        setStartCommit(walker, nullptr);
 
-        startRevWalk (walker);
+        startRevWalk (walker, false);
 
         generateGraph();
 
@@ -64,7 +64,7 @@ void Commits::gitRevWalkNextException(GitException e)
     qCritical() << __func__ << ":" << __LINE__<< " " << e.what();
 }
 
-void Commits::startRevWalk(git_revwalk* walker)
+void Commits::startRevWalk(git_revwalk* walker, bool update)
 {
     git_oid sha;
     try
@@ -77,7 +77,14 @@ void Commits::startRevWalk(git_revwalk* walker)
             Sha *shaForCommit = new Sha(shaCopy);
             Commit* commit = new Commit(repo, shaForCommit);
 
-            CommitsList->append(commit);
+            if(update)
+            {
+                CommitsList->insert(CommitsList->begin(), commit);
+            }
+            else
+            {
+                CommitsList->append(commit);
+            }
             lookupMap.insert(shaForCommit->toString(), commit);
         }
     }
@@ -89,17 +96,26 @@ void Commits::startRevWalk(git_revwalk* walker)
 
 }
 
+
+
 void Commits::gitRevWalkPushHeadException (GitException e)
 {
     qCritical() << __func__ << ":" << __LINE__<< " " << e.what();
 }
 
 
-void Commits::setStartCommit(git_revwalk* walker)
+void Commits::setStartCommit(git_revwalk* walker, Sha *shaToWalkFrom)
 {
     try
     {
-        git_revwalk_push_head(walker);
+        if(shaToWalkFrom)
+        {
+            gitTest(git_revwalk_push(walker, shaToWalkFrom->raw()));
+        }
+        else
+        {
+            gitTest(git_revwalk_push_head(walker));
+        }
     }
     catch (GitException e)
     {
@@ -112,7 +128,7 @@ void Commits::revNewWalkerError(GitException e)
     qCritical() << __func__ << ":" << __LINE__<< " " << e.what();
 }
 
-void Commits::applySortMode(git_revwalk *walker)
+void Commits::applySortMode(git_revwalk *walker, bool reverse)
 {
     if (currentSortMode == SORT_NONE)
     {
@@ -120,7 +136,11 @@ void Commits::applySortMode(git_revwalk *walker)
     }
     else
     {
-        git_revwalk_sorting(walker, 1 << currentSortMode);
+        int mode = 1 << currentSortMode;
+        if(reverse)
+            mode = mode | 1 << SORT_REVERSE;
+
+        git_revwalk_sorting(walker, mode);
     }
 
 }
@@ -146,6 +166,33 @@ Commit *Commits::lookupCommit(Sha *sha)
     }
 
     return commit;
+}
+
+void Commits::updateCommits(int difference)
+{
+    if(difference < 0)
+    {
+        for(int index = 0; index < -difference; index++)
+        {
+            Commit* commit = CommitsList->at(0);
+            lookupMap.remove(commit->toString());
+            CommitsList->removeFirst();
+            delete commit;
+        }
+    }
+
+    if(difference > 0)
+    {
+        Commit *commitFrom = CommitsList->at(0);
+        git_revwalk *walker;
+        gitTest(git_revwalk_new(&walker, repo->getInternalRepo()));
+
+        applySortMode(walker, true);
+
+        setStartCommit(walker, commitFrom);
+
+        startRevWalk(walker, true);
+    }
 }
 
 void Commits::generateGraph()

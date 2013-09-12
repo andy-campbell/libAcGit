@@ -26,6 +26,7 @@ THE SOFTWARE.
 #define TAGS_H
 
 #include <QStringList>
+#include <QMap>
 
 #include "ITags.h"
 #include "Tag.h"
@@ -54,10 +55,11 @@ namespace AcGit
 
             virtual QList<Tag *> lookupTag(Sha *sha);
 
+            void upateTags();
     private:
             Repository *repo;
             QList<Tag*> tags;
-
+            QMap<QString, Tag*> tagsMap;
 
             void populateTags();
             void gitTagListLookupException(GitException e);

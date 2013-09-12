@@ -60,11 +60,18 @@ void Repository::initaliseRepo()
     tags = new Tags(this);
     config = new Configuration(this);
     reset = new Reset(this);
+
+    head = HeadCommit();
 }
 
 Repository::~Repository()
 {
     delete branches;
+    delete commits;
+    delete tags;
+    delete config;
+    delete reset;
+
     git_repository_free (repo);
 }
 
@@ -165,22 +172,36 @@ int Repository::AheadBehind(Sha* from, Sha* to)
 //TODO make this function more efficient. Don't reload everything.
 void Repository::Update()
 {
-    if(branches)
-        delete branches;
+    int numCommitDifference = AheadBehind(head, HeadCommit());
+    if(numCommitDifference == 0)
+        return;
 
-    if(commits)
-        delete commits;
+    dynamic_cast<Branches*>(branches)->updateActiveBranch();
+    dynamic_cast<Commits*>(commits)->updateCommits(numCommitDifference);
+    dynamic_cast<Tags*>(tags)->upateTags();
 
-    if(tags)
-        delete tags;
+    head = HeadCommit();
 
-    if(config)
-        delete config;
+//    if (AheadBehind())
 
-    branches = new Branches(repo);
-    commits = new Commits(this);
-    tags = new Tags(this);
-    config = new Configuration(this);
+//    if(branches)
+//        delete branches;
+
+//    if(commits)
+//        delete commits;
+
+//    if(tags)
+//        delete tags;
+
+//    if(config)
+//        delete config;
+
+//    branches = new Branches(repo);
+//    commits = new Commits(this);
+//    tags = new Tags(this);
+//    config = new Configuration(this);
+
+//    qDebug() <<  "Ahead " << AheadBehind(head, HeadCommit());
 }
 
 }

@@ -72,6 +72,7 @@ void Tags::populateTags()
         git_tag_lookup(&rawTag, repo->getInternalRepo(), tag.second);
 
         tags.append(new Tag (tag.first, new Sha(tag.second), rawTag));
+        tagsMap.insert(tag.first, tags.last());
     }
 
 }
@@ -184,6 +185,34 @@ QList<Tag *> Tags::lookupTag(Sha *sha)
         }
     }
     return matchingTags;
+}
+
+void Tags::upateTags()
+{
+    git_strarray listOfTags;
+    git_tag_list(&listOfTags, repo->getInternalRepo());
+
+    for(int index = 0; index < listOfTags.count; index++)
+    {
+        QString tagName(listOfTags.strings[0]);
+        QMap<QString ,Tag *>::iterator tagsItor;
+        tagsItor = tagsMap.find(tagName);
+        if (tagsItor == tagsMap.end())
+        {
+            git_oid sha;
+            git_tag *rawTag;
+            QString fullReference = "refs/tags/" + tagName;
+            gitTest(git_reference_name_to_id(&sha, repo->getInternalRepo(), fullReference.toLocal8Bit()));
+            git_oid *shaCopy = (git_oid *)malloc (sizeof(struct git_oid));
+            git_oid_cpy(shaCopy, &sha);
+            git_tag_lookup(&rawTag, repo->getInternalRepo(), &sha);
+
+            tags.append(new Tag (tagName, new Sha(shaCopy), rawTag));
+            tagsMap.insert(tagName, tags.last());
+        }
+
+
+    }
 }
 
 }

@@ -46,6 +46,8 @@ namespace AcGit
             virtual void setSortingMode(SortMode mode);
 
             Commit* lookupCommit(Sha *sha);
+
+            void updateCommits(int difference);
     private:
             Repository *repo;
             SortMode currentSortMode;
@@ -55,12 +57,13 @@ namespace AcGit
 
             void generateGraph();
             void addHeadCommit();
-            void startRevWalk(git_revwalk *walker);
-            void setStartCommit(git_revwalk *walker);
+            void startRevWalk(git_revwalk *walker, bool update);
+            void setStartCommit(git_revwalk *walker, Sha *sha);
             void gitRevWalkPushHeadException(GitException e);
             void gitRevWalkNextException(GitException e);
-            void applySortMode(git_revwalk *walker);
+            void applySortMode(git_revwalk *walker, bool reverse);
             void revNewWalkerError(GitException e);
+
     };
 }
 #endif // COMMITS_H
