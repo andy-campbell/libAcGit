@@ -64,7 +64,7 @@ unsigned int TreeEntry::attributes() const
     return attributes;
 }
 
-Blob TreeEntry::fileBlob()
+Blob* TreeEntry::fileBlob()
 {
     git_tree_entry *entry;
     git_object* treeEntryObject;
@@ -80,8 +80,7 @@ Blob TreeEntry::fileBlob()
         qCritical() << __func__ << ":" << __LINE__ << " " << e.exceptionMessage();
     }
 
-    Blob entryBlob(treeEntryObject);
-    return entryBlob;
+    return new Blob(treeEntryObject);
 }
 
 }
