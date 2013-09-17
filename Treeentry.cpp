@@ -35,18 +35,8 @@ TreeEntry::TreeEntry(const git_tree *root, QString path, Repository *repo)
 {
     this->repo = repo;
     this->root = root;
-    //this->treeEntry = treeEntry;
     this->path = path;
 }
-
-//QString TreeEntry::fileName() const
-//{
-//    const char *entryName = git_tree_entry_name(treeEntry);
-
-//    QString fileName(entryName);
-
-//    return fileName;
-//}
 
 QString TreeEntry::fullPath() const
 {
@@ -68,7 +58,6 @@ Blob* TreeEntry::fileBlob()
 {
     git_tree_entry *entry;
     git_object* treeEntryObject;
-    qDebug() << "called path is: " << fullPath();
     try
     {
         gitTest(git_tree_entry_bypath(&entry, root, fullPath().toLocal8Bit()));

@@ -72,8 +72,6 @@ TreeEntry* Tree::getEntry(QString path)
     {
         if (entry->fullPath().compare(path) == 0)
         {
-            qDebug() << "found " << entry->fullPath();
-            qDebug() << "searching for " << path;
             return entry;
         }
     }

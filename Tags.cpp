@@ -119,11 +119,6 @@ void Tags::createTag(QString name, Sha *sha, Tagger *tagger, QString message)
     git_tag_lookup(&newTag, repo->getInternalRepo(), &newSha);
 
     tags.append(new Tag (name, new Sha(&newSha), newTag));
-
-    foreach (Tag *tag, tags)
-    {
-        qDebug() << "tagName" << tag->name();
-    }
 }
 
 void Tags::deleteTagException (GitException e)

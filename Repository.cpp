@@ -181,27 +181,6 @@ void Repository::Update()
     dynamic_cast<Tags*>(tags)->upateTags();
 
     head = HeadCommit();
-
-//    if (AheadBehind())
-
-//    if(branches)
-//        delete branches;
-
-//    if(commits)
-//        delete commits;
-
-//    if(tags)
-//        delete tags;
-
-//    if(config)
-//        delete config;
-
-//    branches = new Branches(repo);
-//    commits = new Commits(this);
-//    tags = new Tags(this);
-//    config = new Configuration(this);
-
-//    qDebug() <<  "Ahead " << AheadBehind(head, HeadCommit());
 }
 
 }

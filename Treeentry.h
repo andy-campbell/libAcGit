@@ -41,8 +41,6 @@ namespace AcGit
         public:
             TreeEntry(const git_tree *root, QString path, Repository *repo);
 
-            //QString fileName() const;
-
             QString fullPath() const;
 
             unsigned int attributes() const;
