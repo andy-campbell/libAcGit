@@ -46,7 +46,8 @@ namespace AcGit
             unsigned int attributes() const;
 
             Blob *fileBlob();
-        private:
+            QString fileName();
+    private:
             const git_tree *root;
             QString path;
             Repository *repo;

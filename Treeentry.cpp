@@ -23,6 +23,8 @@ THE SOFTWARE.
 */
 
 #include <QDebug>
+#include <QFile>
+#include <QFileInfo>
 
 #include "Treeentry.h"
 #include "Gitexception.h"
@@ -41,6 +43,13 @@ TreeEntry::TreeEntry(const git_tree *root, QString path, Repository *repo)
 QString TreeEntry::fullPath() const
 {
     return path;
+}
+
+QString TreeEntry::fileName()
+{
+    QFile file(path);
+    QFileInfo fileInfo(file.fileName());
+    return fileInfo.fileName();
 }
 
 unsigned int TreeEntry::attributes() const
