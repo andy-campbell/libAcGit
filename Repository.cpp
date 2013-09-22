@@ -56,12 +56,13 @@ Repository::Repository(git_repository *internalRepo)
 void Repository::initaliseRepo()
 {
     branches = new Branches(repo);
-    commits = new Commits(this);
+    branchHead = dynamic_cast<Branches*>(branches)->getActiveBranch();
+
+    commits = new Commits(this, branchHead);
     tags = new Tags(this);
     config = new Configuration(this);
     reset = new Reset(this);
 
-    head = HeadCommit();
 }
 
 Repository::~Repository()
@@ -114,8 +115,9 @@ Commit* Repository::HeadCommit()
         gitTest(git_repository_head(&headRef, repo));
 
         const git_oid *sha = git_reference_target(headRef);
-        Sha searchSha(sha);
-        commit = commits->lookupCommit(&searchSha);
+        Sha *searchSha = new Sha(sha);
+        commit = commits->lookupCommit(searchSha);
+        delete searchSha;
 
     }
     catch(GitException e)
@@ -124,6 +126,22 @@ Commit* Repository::HeadCommit()
     }
     return commit;
 }
+
+Commit* Repository::ActiveBranchCommit()
+{
+    Commit *commit = nullptr;
+    try
+    {
+        commit = commits->lookupCommit(branchHead);
+
+    }
+    catch(GitException e)
+    {
+        qDebug() << e.exceptionMessage();
+    }
+    return commit;
+}
+
 
 bool Repository::hasChanges(Diff &diff)
 {
@@ -138,13 +156,13 @@ bool Repository::hasChanges(Diff &diff)
 
 bool Repository::HasWorkingTreeChanges()
 {
-    WorkingDirDiff diff(HeadCommit()->tree());
+    WorkingDirDiff diff(ActiveBranchCommit()->tree());
     return hasChanges(diff);
 }
 
 bool Repository::HasStagingDirChanges()
 {
-    StagingDirDiff diff(HeadCommit()->tree());
+    StagingDirDiff diff(ActiveBranchCommit()->tree());
     return hasChanges(diff);
 }
 
@@ -172,15 +190,19 @@ int Repository::AheadBehind(Sha* from, Sha* to)
 //TODO make this function more efficient. Don't reload everything.
 void Repository::Update()
 {
-    int numCommitDifference = AheadBehind(head, HeadCommit());
+    Sha *oldBranchSha = new Sha(branchHead->raw());
+    dynamic_cast<Branches*>(branches)->updateActiveBranch();
+    Sha *newBranchHead = dynamic_cast<Branches*>(branches)->getActiveBranch();
+
+    int numCommitDifference = AheadBehind(oldBranchSha, newBranchHead);
     if(numCommitDifference == 0)
         return;
 
-    dynamic_cast<Branches*>(branches)->updateActiveBranch();
-    dynamic_cast<Commits*>(commits)->updateCommits(numCommitDifference);
-    dynamic_cast<Tags*>(tags)->upateTags();
+    branchHead = newBranchHead;
 
-    head = HeadCommit();
+    dynamic_cast<Commits*>(commits)->updateCommits(newBranchHead);
+    dynamic_cast<Tags*>(tags)->upateTags();
+    delete oldBranchSha;
 }
 
 }

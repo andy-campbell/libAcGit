@@ -138,6 +138,9 @@ git_commit *Commit::rawCommit()
 
 void Commit::addGraph(Graph *graph)
 {
+    if(this->graph)
+        delete this->graph;
+
     this->graph = graph;
 }
 

@@ -39,7 +39,7 @@ namespace AcGit
     class Commits : public ICommits
     {
         public:
-            Commits (Repository *repo, SortMode mode = SORT_TOPOLOGICAL);
+            Commits (Repository *repo, Sha *shaToWalkFrom, SortMode mode = SORT_TOPOLOGICAL);
 
             virtual QList<Commit *> *getAllCommits();
 
@@ -47,7 +47,7 @@ namespace AcGit
 
             Commit* lookupCommit(Sha *sha);
 
-            void updateCommits(int difference);
+            void updateCommits(Sha *shaToWalkFrom);
     private:
             Repository *repo;
             SortMode currentSortMode;
@@ -57,7 +57,7 @@ namespace AcGit
 
             void generateGraph();
             void addHeadCommit();
-            void startRevWalk(git_revwalk *walker, bool update);
+            void startRevWalk(git_revwalk *walker);
             void setStartCommit(git_revwalk *walker, Sha *sha);
             void gitRevWalkPushHeadException(GitException e);
             void gitRevWalkNextException(GitException e);

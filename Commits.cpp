@@ -30,7 +30,7 @@ THE SOFTWARE.
 namespace AcGit
 {
 
-Commits::Commits(Repository *repo, SortMode mode)
+Commits::Commits(Repository *repo, Sha *shaToWalkFrom, SortMode mode)
 {
     this->repo = repo;
     this->currentSortMode = mode;
@@ -44,9 +44,9 @@ Commits::Commits(Repository *repo, SortMode mode)
 
         applySortMode(walker, false);
 
-        setStartCommit(walker, nullptr);
+        setStartCommit(walker, shaToWalkFrom);
 
-        startRevWalk (walker, false);
+        startRevWalk (walker);
 
         generateGraph();
 
@@ -64,36 +64,33 @@ void Commits::gitRevWalkNextException(GitException e)
     qCritical() << __func__ << ":" << __LINE__<< " " << e.what();
 }
 
-void Commits::startRevWalk(git_revwalk* walker, bool update)
+void Commits::startRevWalk(git_revwalk* walker)
 {
     git_oid sha;
     try
     {
+        CommitsList->clear();
+
         while (gitTest(git_revwalk_next(&sha, walker) != GIT_ITEROVER))
         {
             git_oid *shaCopy = (git_oid *)malloc (sizeof(struct git_oid));
             git_oid_cpy(shaCopy, &sha);
 
             Sha *shaForCommit = new Sha(shaCopy);
-            Commit* commit = new Commit(repo, shaForCommit);
+            Commit *commit = lookupCommit(shaForCommit);
+            if (commit == nullptr)
+            {
+                commit = new Commit(repo, shaForCommit);
+                lookupMap.insert(shaForCommit->toString(), commit);
+            }
 
-            if(update)
-            {
-                CommitsList->insert(CommitsList->begin(), commit);
-            }
-            else
-            {
-                CommitsList->append(commit);
-            }
-            lookupMap.insert(shaForCommit->toString(), commit);
+            CommitsList->append(commit);
         }
     }
     catch (GitException e)
     {
         gitRevWalkNextException(e);
     }
-
-
 }
 
 
@@ -168,31 +165,19 @@ Commit *Commits::lookupCommit(Sha *sha)
     return commit;
 }
 
-void Commits::updateCommits(int difference)
+void Commits::updateCommits(Sha* shaToWalkFrom)
 {
-    if(difference < 0)
-    {
-        for(int index = 0; index < -difference; index++)
-        {
-            Commit* commit = CommitsList->at(0);
-            lookupMap.remove(commit->toString());
-            CommitsList->removeFirst();
-            delete commit;
-        }
-    }
+    git_revwalk *walker;
+    gitTest(git_revwalk_new(&walker, repo->getInternalRepo()));
 
-    if(difference > 0)
-    {
-        Commit *commitFrom = CommitsList->at(0);
-        git_revwalk *walker;
-        gitTest(git_revwalk_new(&walker, repo->getInternalRepo()));
+    applySortMode(walker, true);
 
-        applySortMode(walker, true);
+    setStartCommit(walker, shaToWalkFrom);
 
-        setStartCommit(walker, commitFrom);
+    startRevWalk(walker);
 
-        startRevWalk(walker, true);
-    }
+    generateGraph();
+
 }
 
 void Commits::generateGraph()

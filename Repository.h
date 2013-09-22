@@ -69,6 +69,7 @@ namespace AcGit
             ITags *TagsAgent();
             Configuration *ConfigurationAgent();
             Commit *HeadCommit();
+            Commit *ActiveBranchCommit();
             IReset *ResetAgent();
 
             bool HasWorkingTreeChanges();
@@ -87,7 +88,7 @@ namespace AcGit
             bool hasWorkingTreeChanges;
             bool hasChanges(Diff &diff);
             void initaliseRepo();
-            Sha *head;
+            Sha *branchHead;
     };
 
 }

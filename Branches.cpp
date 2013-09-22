@@ -255,9 +255,11 @@ QString Branches::currentBranch()
 
 void Branches::updateActiveBranch()
 {
-    QString activeBranchName = currentBranch();
+    Branch* activeBranch = getActiveBranch();
+    QString activeBranchName = activeBranch->getBranchName();
+    if(activeBranch == nullptr)
+        return;
 
-    Branch* activeBranch = lookupBranch(activeBranchName);
     activeBranch->getRefName();
     localBranches.removeOne(activeBranch);
 
@@ -265,6 +267,14 @@ void Branches::updateActiveBranch()
 
     activeBranchName = activeBranchName.right(activeBranchName.length() - activeBranchName.lastIndexOf('/') - 1);
     createLocalBranch(activeBranchName);
+}
+
+Branch* Branches::getActiveBranch()
+{
+    QString activeBranchName = currentBranch();
+
+    return lookupBranch(activeBranchName);
+
 }
 
 }

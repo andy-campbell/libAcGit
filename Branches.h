@@ -61,6 +61,7 @@ namespace AcGit
             virtual QString currentBranch();
 
             void updateActiveBranch();
+            Branch *getActiveBranch();
     private:
 
             void createLocalBranch(QString branchName);
