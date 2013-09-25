@@ -185,8 +185,7 @@ QVector<enum Graph::GraphSymbol> *CommitGraph::buildUpLane(QSet<int> branchedToR
         bool containsBranch = branchedToRow.contains(i);
         bool containsMerge = mergeFromRow.contains(i);
         Sha zero;
-        Sha nextCommitSha = nextCommits[i];
-        bool containsZero = &nextCommitSha == &zero;
+        bool containsZero = nextCommits[i] == &zero;
 
         // anything before active row is an empty lane or non commit lane
         if (i < activeRow )
