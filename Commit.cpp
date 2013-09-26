@@ -80,7 +80,10 @@ void Commit::commitLookupExecption(GitException e)
 
 QString Commit::log() const
 {
+    QRegExp regex("(\\r|\\n)");
     QString log = QString(git_commit_message(commit));
+
+    log = log.remove(0, log.indexOf(regex) + 1);
     return log;
 }
 
@@ -88,7 +91,9 @@ QString Commit::log() const
 QString Commit::shortLog()
 {
     QRegExp regex("(\\r|\\n)");
-    QString shortLog = log().left(80).split(regex).first();
+    QString log = QString(git_commit_message(commit));
+
+    QString shortLog = log.left(80).split(regex).first();
     return shortLog;
 }
 
