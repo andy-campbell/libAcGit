@@ -88,6 +88,7 @@ namespace AcGit
             bool hasWorkingTreeChanges;
             bool hasChanges(Diff &diff);
             void initaliseRepo();
+            Sha *getRepositoryHead();
             Sha *branchHead;
     };
 

@@ -250,15 +250,19 @@ QString Branches::currentBranch()
         qCritical() << __func__ << ":" << __LINE__ << " " << e.exceptionMessage();
     }
 
+    if(!currentBranchName.contains("refs/heads"))
+        currentBranchName = "No active branch";
+
     return currentBranchName;
 }
 
 void Branches::updateActiveBranch()
 {
     Branch* activeBranch = getActiveBranch();
-    QString activeBranchName = activeBranch->getBranchName();
     if(activeBranch == nullptr)
         return;
+    
+    QString activeBranchName = activeBranch->getBranchName();
 
     activeBranch->getRefName();
     localBranches.removeOne(activeBranch);
@@ -272,6 +276,10 @@ void Branches::updateActiveBranch()
 Branch* Branches::getActiveBranch()
 {
     QString activeBranchName = currentBranch();
+    if (activeBranchName.contains("No Branch") == true)
+    {
+        return nullptr;
+    }
 
     return lookupBranch(activeBranchName);
 

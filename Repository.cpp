@@ -55,10 +55,11 @@ Repository::Repository(git_repository *internalRepo)
 
 void Repository::initaliseRepo()
 {
+    Sha *headSha = getRepositoryHead();
+    qDebug() << headSha->toString();
     branches = new Branches(repo);
     branchHead = dynamic_cast<Branches*>(branches)->getActiveBranch();
-
-    commits = new Commits(this, branchHead);
+    commits = new Commits(this, headSha);
     tags = new Tags(this);
     config = new Configuration(this);
     reset = new Reset(this);
@@ -76,6 +77,24 @@ Repository::~Repository()
     git_repository_free (repo);
 }
 
+/* Caller must free Sha */
+Sha *Repository::getRepositoryHead()
+{
+    Sha* headSha = nullptr;
+    try
+    {
+        git_reference *headRef;
+        gitTest(git_repository_head(&headRef, repo));
+
+        const git_oid *sha = git_reference_target(headRef);
+        headSha = new Sha(sha);
+    }
+    catch(GitException e)
+    {
+        qDebug() << e.exceptionMessage();
+    }
+    return headSha;
+}
 IBranches *Repository::BranchAgent()
 {
     return branches;
@@ -109,20 +128,11 @@ Configuration* Repository::ConfigurationAgent()
 Commit* Repository::HeadCommit()
 {
     Commit *commit = nullptr;
-    try
+    Sha *headSha = getRepositoryHead();
+    if (headSha)
     {
-        git_reference *headRef;
-        gitTest(git_repository_head(&headRef, repo));
+        commit = commits->lookupCommit(headSha);
 
-        const git_oid *sha = git_reference_target(headRef);
-        Sha *searchSha = new Sha(sha);
-        commit = commits->lookupCommit(searchSha);
-        delete searchSha;
-
-    }
-    catch(GitException e)
-    {
-        qDebug() << e.exceptionMessage();
     }
     return commit;
 }
@@ -156,13 +166,17 @@ bool Repository::hasChanges(Diff &diff)
 
 bool Repository::HasWorkingTreeChanges()
 {
-    WorkingDirDiff diff(ActiveBranchCommit()->tree());
+    Sha* headSha = getRepositoryHead();
+    Commit* headCommit = commits->lookupCommit(headSha);
+    WorkingDirDiff diff(headCommit->tree());
     return hasChanges(diff);
 }
 
 bool Repository::HasStagingDirChanges()
 {
-    StagingDirDiff diff(ActiveBranchCommit()->tree());
+    Sha* headSha = getRepositoryHead();
+    Commit* headCommit = commits->lookupCommit(headSha);
+    StagingDirDiff diff(headCommit->tree());
     return hasChanges(diff);
 }
 
